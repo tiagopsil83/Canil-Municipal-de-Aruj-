@@ -10,12 +10,17 @@
     <meta name="author" content="grupo PI">
 
     <title>Canil Municipal de Arujá</title>
-</head>
 
-<body>
+
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
+
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+
+
     <style>
         :root {
             --primary-color: #0d47a1;
@@ -26,19 +31,65 @@
             /* Azul claro */
         }
 
+        /* Preloader */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .preloader.fade-out {
+            opacity: 0;
+        }
+
+        .preloader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--light-color);
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f8f9fa;
+            overflow-x: hidden;
         }
 
         .navbar {
             background-color: white;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            padding: 10px 0;
+            background-color: rgba(255, 255, 255, 0.95);
         }
 
         .navbar-brand {
             color: var(--primary-color) !important;
             font-weight: 600;
+            font-size: 1.5rem;
         }
 
         .nav-link {
@@ -46,48 +97,75 @@
             font-weight: 500;
             padding: 0.5rem 1rem !important;
             transition: all 0.3s;
+            position: relative;
         }
 
-        .nav-link:hover {
-            color: var(--secondary-color) !important;
-            background-color: var(--light-color);
-            border-radius: 5px;
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background-color: var(--secondary-color);
+            transition: all 0.3s;
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
         }
 
         .hero {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(rgba(13, 71, 161, 0.8), rgba(66, 165, 245, 0.8)),
+                url('img/hero-bg.jpg') center/cover no-repeat;
             color: white;
-            padding: 80px 0;
+            padding: 120px 0;
             position: relative;
             overflow: hidden;
         }
 
-        .hero {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            padding: 80px 0;
-            position: relative;
-            overflow: hidden;
+        .hero::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(to top, #f8f9fa, transparent);
         }
-
 
         .section-title {
             color: var(--primary-color);
             font-weight: 600;
             margin-bottom: 2rem;
             text-align: center;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background-color: var(--secondary-color);
         }
 
         .card {
             border: none;
-            border-radius: 10px;
+            border-radius: 15px;
             transition: all 0.3s;
             background: white;
+            overflow: hidden;
         }
 
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
         }
 
         .service-card {
@@ -96,286 +174,424 @@
         }
 
         .service-icon {
-            font-size: 2.5rem;
+            font-size: 3rem;
             color: var(--secondary-color);
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .service-card:hover .service-icon {
+            transform: scale(1.1);
         }
 
         .btn-custom {
             background-color: var(--primary-color);
             color: white;
-            padding: 0.5rem 1.5rem;
-            border-radius: 5px;
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
             transition: all 0.3s;
+            border: none;
+            font-weight: 500;
         }
 
         .btn-custom:hover {
             background-color: var(--secondary-color);
             color: white;
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(66, 165, 245, 0.3);
         }
 
         .adoption-section {
             background-color: var(--light-color);
-            padding: 4rem 0;
+            padding: 6rem 0;
+            position: relative;
         }
 
         .pet-card {
             margin-bottom: 2rem;
+            border-radius: 15px;
+            overflow: hidden;
         }
 
         .pet-card img {
-            height: 200px;
+            height: 250px;
             object-fit: cover;
-            border-radius: 10px 10px 0 0;
+            transition: all 0.3s;
+        }
+
+        .pet-card:hover img {
+            transform: scale(1.05);
         }
 
         .contact-section {
             background-color: white;
-            padding: 4rem 0;
+            padding: 6rem 0;
         }
 
         .contact-form {
             max-width: 600px;
             margin: 0 auto;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
         }
 
         .form-control {
             border: 2px solid var(--light-color);
-            padding: 0.8rem;
-            border-radius: 5px;
+            padding: 1rem;
+            border-radius: 10px;
+            transition: all 0.3s;
         }
 
         .form-control:focus {
             border-color: var(--secondary-color);
-            box-shadow: none;
+            box-shadow: 0 0 0 0.2rem rgba(66, 165, 245, 0.25);
         }
 
         footer {
             background-color: var(--primary-color);
             color: white;
-            padding: 2rem 0;
+            padding: 3rem 0;
+            position: relative;
         }
 
         .social-links a {
             color: white;
-            font-size: 1.5rem;
-            margin: 0 10px;
+            font-size: 1.8rem;
+            margin: 0 15px;
             transition: all 0.3s;
+            display: inline-block;
         }
 
         .social-links a:hover {
             color: var(--secondary-color);
-            transform: translateY(-3px);
+            transform: translateY(-5px);
+        }
+
+        /* Botão Voltar ao Topo */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 999;
+        }
+
+        .back-to-top.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            background-color: var(--secondary-color);
+            color: white;
+            transform: translateY(-5px);
+        }
+
+        /* Animações */
+        [data-aos] {
+            pointer-events: none;
+        }
+
+        [data-aos].aos-animate {
+            pointer-events: auto;
         }
     </style>
-    </head>
+</head>
 
-    <body>
-        <nav class="navbar navbar-expand-lg navbar-light fixed-top">
-            <div class="container">
-                <a class="navbar-brand" href="#">
-                    <i class="fas fa-paw me-2"></i>Canil Municipal de Arujá
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="#inicio">Início</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#servicos">Serviços</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#adocao">Adoção</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#contato">Contato</a>
-                        </li>
-                    </ul>
+<body>
+    <!-- Preloader -->
+    <div class="preloader">
+        <div class="preloader-spinner"></div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-paw me-2"></i>Canil Municipal
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#inicio">Início</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#servicos">Serviços</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#adocao">Adoção</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contato">Contato</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6" data-aos="fade-right">
+                    <h1 class="display-4 fw-bold mb-4">Canil Municipal de Arujá</h1>
+                    <p class="lead mb-4">Cuidando e protegendo os animais de nossa cidade com amor e dedicação.</p>
+                    <div class="d-flex gap-3">
+                        <a href="#contato" class="btn btn-custom btn-lg">Entre em Contato</a>
+                        <a href="#adocao" class="btn btn-outline-light btn-lg">Conheça Nossos Animais</a>
+                    </div>
                 </div>
             </div>
-        </nav>
+        </div>
+    </section>
 
-        <section id="inicio" class="hero">
-            <div>
-                <div class="container">
-                    <div class="row align-items-center">
-                        <div class="col-lg-6">
-                            <h1 class="display-4 fw-bold mb-4">Canil Municipal de Arujá</h1>
-                            <p class="lead mb-4">Cuidando e protegendo os animais de nossa cidade com amor e dedicação.
+    <!-- Serviços Section -->
+    <section id="servicos" class="py-5">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Nossos Serviços</h2>
+            <div class="row g-4">
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card service-card">
+                        <i class="fas fa-syringe service-icon"></i>
+                        <h4>Vacinação</h4>
+                        <p>Serviço de vacinação para cães e gatos</p>
+                        <ul class="list-unstyled">
+                            <li>Anti-rábica</li>
+                            <li>De segunda a sexta das 09:00 às 11:00 <br>e das 13:00 às 16:00</li>
+                        </ul>
+                        <a href="#contato" class="btn btn-custom mt-3">Agendar</a>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card service-card">
+                        <i class="fas fa-cut service-icon"></i>
+                        <h4>Castração</h4>
+                        <p>Castração segura e profissional</p>
+                        <ul class="list-unstyled">
+                            <li>Cães e Gatos</li>
+                            <li>Pós-operatório</li>
+                            <li>Acompanhamento</li>
+                        </ul>
+                        <a href="#contato" class="btn btn-custom mt-3">Agendar</a>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="card service-card">
+                        <i class="fas fa-home service-icon"></i>
+                        <h4>Adoção</h4>
+                        <p>Adoção responsável de animais</p>
+                        <ul class="list-unstyled">
+                            <li>Cães e Gatos</li>
+                            <li>Todos vacinados</li>
+                            <li>Todos castrados</li>
+                        </ul>
+                        <a href="#adocao" class="btn btn-custom mt-3">Conhecer</a>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="400">
+                    <div class="card service-card">
+                        <i class="fas fa-bug service-icon"></i>
+                        <h4>Controle de Abelhas e Marimbondos</h4>
+                        <p>Remoção segura de colmeias e ninhos</p>
+                        <ul class="list-unstyled">
+                            <li>Remoção profissional</li>
+                            <li>Segurança garantida</li>
+                            <li>Atendimento emergencial</li>
+                        </ul>
+                        <a href="#contato" class="btn btn-custom mt-3">Solicitar</a>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="500">
+                    <div class="card service-card">
+                        <i class="fas fa-spider service-icon"></i>
+                        <h4>Controle de Pragas Urbanas</h4>
+                        <p>Eliminação segura de pragas urbanas</p>
+                        <ul class="list-unstyled">
+                            <li>Ratos e camundongos</li>
+                            <li>Percevejos e baratas</li>
+                            <li>Escorpiões e aranhas</li>
+                            <li>Dedetização profissional</li>
+                        </ul>
+                        <a href="#contato" class="btn btn-custom mt-3">Solicitar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Adoção Section -->
+    <section id="adocao" class="adoption-section">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Animais para Adoção</h2>
+            <div class="row">
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card pet-card">
+                        <img src="img/cachorro1.jpg" alt="Cão para adoção">
+                        <div class="card-body">
+                            <h5 class="card-title">Thor</h5>
+                            <p class="card-text">
+                                <strong>Idade:</strong> 2 anos<br>
+                                <strong>Porte:</strong> Médio<br>
+                                <strong>Características:</strong> Dócil e brincalhão
                             </p>
-                            <a href=" #contato" class="btn btn-custom btn-lg me-3">Entre em Contato</a>
-                            <a href="#adocao" class="btn btn-outline-light btn-lg">Conheça Nossos Animais</a>
+                            <a href="#contato" class="btn btn-custom w-100">Quero Adotar</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card pet-card">
+                        <img src="img/gato1.jpg" alt="Gato para adoção">
+                        <div class="card-body">
+                            <h5 class="card-title">Luna</h5>
+                            <p class="card-text">
+                                <strong>Idade:</strong> 1 ano<br>
+                                <strong>Porte:</strong> Pequeno<br>
+                                <strong>Características:</strong> Carinhosa e tranquila
+                            </p>
+                            <a href="#contato" class="btn btn-custom w-100">Quero Adotar</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="card pet-card">
+                        <img src="img/cachorro2.jpg" alt="Cão para adoção">
+                        <div class="card-body">
+                            <h5 class="card-title">Rex</h5>
+                            <p class="card-text">
+                                <strong>Idade:</strong> 3 anos<br>
+                                <strong>Porte:</strong> Grande<br>
+                                <strong>Características:</strong> Tranquilo e protetor
+                            </p>
+                            <a href="#contato" class="btn btn-custom w-100">Quero Adotar</a>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section id="servicos" class="py-5">
-            <div class="container">
-                <h2 class="section-title">Nossos Serviços</h2>
-                <div class="row g-4">
-                    <div class="col-md-4">
-                        <div class="card service-card">
-                            <i class="fas fa-syringe service-icon"></i>
-                            <h4>Vacinação</h4>
-                            <p>Serviço de vacinação para cães e gatos</p>
-                            <ul class="list-unstyled">
-                                <li>Anti-rábica</li>
-                                <li>De segunda a sexta das 09:00 às 11:00 <br>e das 13:00 às 16:00</li>
-                            </ul>
-                            <a href="#contato" class="btn btn-custom mt-3">Agendar</a>
-                        </div>
+    <!-- Contato Section -->
+    <section id="contato" class="contact-section">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Entre em Contato</h2>
+            <div class="contact-form" data-aos="fade-up" data-aos-delay="100">
+                <form id="contactForm">
+                    <div class="mb-3">
+                        <input type="text" class="form-control" placeholder="Seu Nome" required>
                     </div>
-                    <div class="col-md-4">
-                        <div class="card service-card">
-                            <i class="fas fa-cut service-icon"></i>
-                            <h4>Castração</h4>
-                            <p>Castração segura e profissional</p>
-                            <ul class="list-unstyled">
-                                <li>Cães e Gatos</li>
-                                <li>Pós-operatório</li>
-                                <li>Acompanhamento</li>
-                            </ul>
-                            <a href="#contato" class="btn btn-custom mt-3">Agendar</a>
-                        </div>
+                    <div class="mb-3">
+                        <input type="email" class="form-control" placeholder="Seu Email" required>
                     </div>
-                    <div class="col-md-4">
-                        <div class="card service-card">
-                            <i class="fas fa-home service-icon"></i>
-                            <h4>Adoção</h4>
-                            <p>Adoção responsável de animais</p>
-                            <ul class="list-unstyled">
-                                <li>Cães e Gatos</li>
-                                <li>Todos vacinados</li>
-                                <li>Todos castrados</li>
-                            </ul>
-                            <a href="#adocao" class="btn btn-custom mt-3">Conhecer</a>
-                        </div>
+                    <div class="mb-3">
+                        <select class="form-control" required>
+                            <option value="">Selecione o Serviço</option>
+                            <option value="vacina">Vacinação</option>
+                            <option value="castracao">Castração</option>
+                            <option value="adocao">Adoção</option>
+                            <option value="outro">Outro</option>
+                        </select>
                     </div>
-                    <div class="col-md-4">
-                        <div class="card service-card">
-                            <i class="fas fa-bug service-icon"></i>
-                            <h4>Controle de Abelhas e Marimbondos</h4>
-                            <p>Remoção segura de colmeias e ninhos</p>
-                            <ul class="list-unstyled">
-                                <li>Remoção profissional</li>
-                                <li>Segurança garantida</li>
-                                <li>Atendimento emergencial</li>
-                            </ul>
-                            <a href="#contato" class="btn btn-custom mt-3">Solicitar</a>
-                        </div>
+                    <div class="mb-3">
+                        <textarea class="form-control" rows="4" placeholder="Sua Mensagem" required></textarea>
                     </div>
-                    <div class="col-md-4">
-                        <div class="card service-card">
-                            <i class="fas fa-spider service-icon"></i>
-                            <h4>Controle de Pragas Urbanas</h4>
-                            <p>Eliminação segura de pragas urbanas</p>
-                            <ul class="list-unstyled">
-                                <li>Ratos e camundongos</li>
-                                <li>Percevejos e baratas</li>
-                                <li>Escorpiões e aranhas</li>
-                                <li>Dedetização profissional</li>
-                            </ul>
-                            <a href="#contato" class="btn btn-custom mt-3">Solicitar</a>
-
-
-                        </div>
-                    </div>
-
-                </div>
+                    <button type="submit" class="btn btn-custom w-100">Enviar Mensagem</button>
+                </form>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section id="adocao" class="adoption-section">
-            <div class="container">
-                <h2 class="section-title">Animais para Adoção</h2>
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="card pet-card">
-                            <img src="img/cachorro1.jpg" alt="Cão para adoção">
-                            <div class="card-body">
-                                <h5 class="card-title">Thor</h5>
-                                <p class="card-text">
-                                    <strong>Idade:</strong> 2 anos<br>
-                                    <strong>Porte:</strong> Médio<br>
-                                    <strong>Características:</strong> Dócil e brincalhão
-                                </p>
-                                <a href="#contato" class="btn btn-custom w-100">Quero Adotar</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card pet-card">
-                            <img src="img/gato1.jpg" alt="Gato para adoção">
-                            <div class="card-body">
-                                <h5 class="card-title">Luna</h5>
-                                <p class="card-text">
-                                    <strong>Idade:</strong> 1 ano<br>
-                                    <strong>Porte:</strong> Pequeno<br>
-                                    <strong>Características:</strong> Carinhosa e tranquila
-                                </p>
-                                <a href="#contato" class="btn btn-custom w-100">Quero Adotar</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card pet-card">
-                            <img src="img/cachorro2.jpg" alt="Cão para adoção">
-                            <div class="card-body">
-                                <h5 class="card-title">Rex</h5>
-                                <p class="card-text">
-                                    <strong>Idade:</strong> 3 anos<br>
-                                    <strong>Porte:</strong> Grande<br>
-                                    <strong>Características:</strong> Tranquilo e protetor
-                                </p>
-                                <a href="#contato" class="btn btn-custom w-100">Quero Adotar</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <!-- Footer -->
+    <footer>
+        <div class="container text-center">
+            <div class="social-links mb-4">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-whatsapp"></i></a>
             </div>
-        </section>
+            <p class="mb-2">&copy; 2024 Canil Municipal de Arujá</p>
+            <p class="mb-2">Endereço: Av. Londres, 350 - Bairro Portão - Arujá - SP</p>
+            <p class="mb-0">Telefone: (11) 4651-3473</p>
+        </div>
+    </footer>
 
-        <section id="contato" class="contact-section">
-            <div class="container">
-                <h2 class="section-title">Entre em Contato</h2>
-                <div class="contact-form">
-                    <form>
-                        <div class="mb-3">
-                            <input type="text" class="form-control" placeholder="Seu Nome" required>
-                        </div>
-                        <div class="mb-3">
-                            <input type="email" class="form-control" placeholder="Seu Email" required>
-                        </div>
-                        <div class="mb-3">
-                            <textarea class="form-control" rows="4" placeholder="Sua Mensagem" required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-custom w-100">Enviar Mensagem</button>
-                    </form>
-                </div>
-            </div>
-        </section>
+    <!-- Botão Voltar ao Topo -->
+    <a href="#" class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </a>
 
-        <footer>
-            <div class="container text-center">
-                <div class="social-links mb-4">
-                    <a href="#"><i class="fab fa-facebook"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-whatsapp"></i></a>
-                </div>
-                <p class="mb-2">&copy; 2024 Canil Municipal de Arujá</p>
-                <p class="mb-2">Endereço: Av. Londres, 350 - Bairro Portão - Arujá - SP</p>
-                <p class="mb-0">Telefone: (11) 4651-3473</p>
-            </div>
-        </footer>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        // Preloader
+        window.addEventListener('load', function () {
+            const preloader = document.querySelector('.preloader');
+            preloader.classList.add('fade-out');
+            setTimeout(() => {
+                preloader.style.display = 'none';
+            }, 500);
+        });
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        // Inicializar AOS
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true
+        });
 
-    </body>
+        // Navbar Scroll
+        window.addEventListener('scroll', function () {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Botão Voltar ao Topo
+        const backToTop = document.querySelector('.back-to-top');
+        window.addEventListener('scroll', function () {
+            if (window.scrollY > 300) {
+                backToTop.classList.add('active');
+            } else {
+                backToTop.classList.remove('active');
+            }
+        });
+
+        // Smooth Scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Form Submit
+        document.getElementById('contactForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            // Aqui você pode adicionar a lógica para enviar o formulário
+            alert('Mensagem enviada com sucesso!');
+            this.reset();
+        });
+    </script>
+</body>
 
 </html>
